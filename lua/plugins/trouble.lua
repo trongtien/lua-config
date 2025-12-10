@@ -23,17 +23,27 @@ return {
                 },
             })
 
-            vim.keymap.set("n", "<leader>tt", function()
+            vim.keymap.set("n", "<leader>ta", function()
                 require("trouble").toggle("diagnostics")
-            end, { desc = "Toggle Trouble Diagnostics" })
+            end, { desc = "Toggle Trouble all Diagnostics" })
 
             vim.keymap.set("n", "<leader>tw", function()
-                require("trouble").toggle("workspace_diagnostics")
-            end, { desc = "Workspace Diagnostics" })
+                require("trouble").toggle({
+                    mode = "diagnostics",
+                    filter = { severity = vim.diagnostic.severity.WARN },
+                })
+            end, { desc = "Toggle Trouble Warnings" })
 
-            vim.keymap.set("n", "<leader>td", function()
-                require("trouble").toggle("document_diagnostics")
-            end, { desc = "Document Diagnostics" })
+            vim.keymap.set("n", "<leader>te", function()
+                require("trouble").toggle({
+                    mode = "diagnostics",
+                    filter = { severity = vim.diagnostic.severity.ERROR },
+                })
+            end, { desc = "Toggle Trouble Errors" })
+
+            vim.keymap.set("n", "<leader>ts", function()
+                require("utils.util_spell").show_spell_errors_quickfix()
+            end, { desc = "Show Spell Check in Quickfix" })
 
             vim.keymap.set("n", "nt", function()
                 require("trouble").next({skip_groups = true, jump = true});

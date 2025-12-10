@@ -11,6 +11,27 @@ opt.ignorecase = true
 opt.smartcase = true
 vim.o.winborder = 'rounded'
 
+-- Spell checking
+opt.spell = false  -- Disable by default, toggle with <leader>ss
+opt.spelllang = { "en_us" }
+opt.spellfile = vim.fn.stdpath('config') .. '/spell/en.utf-8.add'
+
+-- Disable spell check for specific filetypes (programming languages)
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = { "lua", "javascript", "typescript", "python", "c", "cpp", "rust", "go", "java", "svelte", "vue", "jsx", "tsx" },
+  callback = function()
+    vim.wo.spell = false
+  end,
+})
+
+-- Enable spell check only for documentation/text files
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = { "markdown", "text", "gitcommit" },
+  callback = function()
+    vim.wo.spell = true
+  end,
+})
+
 -- Fix delay issues
 opt.timeout = true
 opt.timeoutlen = 300  -- Time to wait for a mapped sequence (default 1000ms)
@@ -29,6 +50,10 @@ vim.diagnostic.config({
   update_in_insert = false, -- Don't update diagnostics in insert mode
   severity_sort = true,    -- Sort diagnostics by severity
 })
+
+-- Setup spell checking utilities
+local util_spell = require("utils.util_spell")
+util_spell.setup_autocmds()
 
 
 vim.api.nvim_create_user_command("RestartAll", function()

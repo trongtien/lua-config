@@ -62,7 +62,16 @@ map.set('n', 'gi', vim.lsp.buf.implementation, {})
 map.set('n', 'gt', vim.lsp.buf.document_symbol, options)
 
 map.set("n", "<Leader>f", vim.lsp.buf.format, options)
-map.set('n', '<leader>ca', vim.lsp.buf.code_action, options)
+map.set('n', '<leader>ca', function()
+  vim.lsp.buf.code_action({
+    filter = function(action)
+      -- Include spell check fixes in code actions
+      return action.kind ~= nil
+    end,
+    apply = true,
+  })
+end, { desc = "Code Action" })
+map.set('v', '<leader>ca', vim.lsp.buf.code_action, { desc = "Code Action (Visual)" })
 map.set('n', '<gh', vim.lsp.buf.signature_help, options)
 map.set('n', '<A-l>', ':BufferLineCycleNext<CR>', options)
 map.set('n', '<A-h>', ':BufferLineCyclePrev<CR>', options)
@@ -71,6 +80,16 @@ map.set('n', '<A-w>', ':BufferLineCloseLeft<CR>:BufferLineCloseRight<CR>', optio
 map.set('n', 'E', vim.diagnostic.open_float, options)
 map.set('n', 'ne', '<cmd>lua vim.diagnostic.goto_next({ severity = vim.diagnostic.severity.ERROR })<CR>', options)
 map.set('n', 'nw', '<cmd>lua vim.diagnostic.goto_next({ severity = vim.diagnostic.severity.WARNING})<CR>', options)
+
+-- Spell check (using util_spell module)
+local util_spell = require("utils.util_spell")
+
+map.set('n', '<leader>ss', util_spell.toggle_spell, { desc = "Toggle Spell Check" })
+map.set('n', '<leader>sf', 'z=', { desc = "Spell Fix Suggestions", noremap = true })
+map.set('n', ']s', ']s', { desc = "Next Spelling Error" })
+map.set('n', '[s', '[s', { desc = "Previous Spelling Error" })
+map.set('n', '<leader>sg', util_spell.add_word_to_spellfile, { desc = "Add word to spell file (ignore)" })
+map.set('n', '<leader>sga', util_spell.add_all_to_spellfile, { desc = "Add all spelling errors to spell file" })
 
 
 -- Move Lines
